@@ -39,9 +39,12 @@ class AuthController extends Controller
         return redirect('/')->with('success', 'Berhasil keluar dari sistem admin.');
     }
     // 1. Mengarahkan admin ke halaman Login Google
+   // 1. Mengarahkan admin ke halaman Login Google
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')
+            ->with(['prompt' => 'select_account']) // <--- TAMBAHKAN KODE INI
+            ->redirect();
     }
 
     // 2. Menangkap balasan dari Google setelah admin memilih akun

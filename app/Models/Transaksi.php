@@ -9,10 +9,18 @@ class Transaksi extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['kepala_keluarga_id', 'jenis_transaksi', 'jenis_sampah', 'berat', 'nominal'];
+    // Menentukan kolom mana saja yang boleh diisi
+    protected $fillable = [
+        'nasabah_id',
+        'jenis_transaksi',
+        'nominal',
+        'keterangan'
+    ];
 
-    public function kepalaKeluarga()
+    // INI JEMBATAN RELASI YANG DICARI OLEH ERROR MERAH TERSEBUT
+    // Menjelaskan ke sistem bahwa satu transaksi ini adalah milik dari seorang Nasabah (Warga)
+    public function nasabah()
     {
-        return $this->belongsTo(KepalaKeluarga::class);
+        return $this->belongsTo(Nasabah::class);
     }
 }

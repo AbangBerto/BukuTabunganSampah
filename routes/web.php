@@ -1,27 +1,52 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NasabahController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
-use Illuminate\Support\Facades\Route;
 
-// Jalur Publik (Tanpa Login)
-Route::get('/', [PublicController::class, 'getHome'])->name('public.index');
-Route::get('/warga/{id}', [PublicController::class, 'getHistory'])->name('public.history');
+// ==========================================
+// 1. Jalur Publik (Warga Cek Saldo Pakai PIN)
+// ==========================================
+Route::get('/', [PublicController::class, 'index'])->name('public.index');
+Route::post('/cek-pin', [PublicController::class, 'checkPin'])->name('public.checkPin');
+Route::get('/warga/{id}/riwayat', [PublicController::class, 'getHistory'])->name('public.history');
+Route::post('/warga/{id}/ganti-pin', [PublicController::class, 'updatePin'])->name('public.updatePin');
 
-// Jalur Autentikasi Admin
+// ==========================================
+// 2. Jalur Autentikasi (Admin Login)
+// ==========================================
 Route::get('/login', [AuthController::class, 'getLogin'])->name('login')->middleware('guest');
 Route::post('/login', [AuthController::class, 'postLogin'])->name('login.post')->middleware('guest');
 Route::post('/logout', [AuthController::class, 'postLogout'])->name('logout');
-Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.login')->middleware('guest');
-Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->middleware('guest');
 
-// Jalur Panel Admin (Wajib Login)
+// Rute Google Login (Opsional, jika Admin menggunakan Google)
+Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('google.callback');
+
+// ==========================================
+// 3. Jalur Data Warga (Wajib Login Admin)
+// ==========================================
+// Semua rute di dalam grup ini dikunci, hanya admin yang bisa mengakses
+Route::middleware('auth')->group(function () {
+    Route::get('/nasabah', [NasabahController::class, 'index'])->name('nasabah.index');
+    Route::post('/nasabah', [NasabahController::class, 'store'])->name('nasabah.store'); // Dipindahkan ke sini agar aman
+    Route::get('/nasabah/{id}/edit', [NasabahController::class, 'edit'])->name('nasabah.edit');
+    Route::put('/nasabah/{id}', [NasabahController::class, 'update'])->name('nasabah.update');
+    Route::delete('/nasabah/{id}', [NasabahController::class, 'destroy'])->name('nasabah.destroy');
+    Route::post('/nasabah/{id}/reset-pin', [NasabahController::class, 'resetPin'])->name('nasabah.resetPin');
+});
+
+// ==========================================
+// 4. Jalur Panel Admin (Wajib Login)
+// ==========================================
 Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/', [AdminController::class, 'getDashboard'])->name('admin.dashboard');
     Route::get('/bersihkan-cache', [AdminController::class, 'getClearCache'])->name('admin.clearCache');
     
-    Route::post('/kk', [AdminController::class, 'postKK'])->name('admin.storeKK');
     Route::post('/transaksi', [AdminController::class, 'postTransaksi'])->name('admin.storeTransaksi');
     Route::post('/tarik-uang', [AdminController::class, 'postTarikUang'])->name('admin.storeTarikUang');
+    Route::delete('/transaksi/{id}', [AdminController::class, 'destroyTransaksi'])->name('admin.destroyTransaksi');
+    Route::get('/laporan', [AdminController::class, 'getLaporan'])->name('admin.laporan');
 });

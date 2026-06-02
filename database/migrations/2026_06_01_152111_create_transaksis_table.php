@@ -10,11 +10,10 @@ return new class extends Migration
     {
         Schema::create('transaksis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('kepala_keluarga_id')->constrained('kepala_keluargas')->onDelete('cascade');
-            $table->enum('jenis_transaksi', ['Setor', 'Tarik'])->default('Setor');
-            $table->enum('jenis_sampah', ['Plastik', 'Besi', 'Lainnya'])->nullable();
-            $table->decimal('berat', 8, 2)->nullable();
+            $table->foreignId('nasabah_id')->constrained('nasabahs')->onDelete('cascade');
+            $table->enum('jenis_transaksi', ['setor', 'tarik']);
             $table->integer('nominal');
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }

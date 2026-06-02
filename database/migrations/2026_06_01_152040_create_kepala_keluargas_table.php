@@ -8,16 +8,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('kepala_keluargas', function (Blueprint $table) {
+        Schema::create('nasabahs', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->text('alamat')->nullable();
+            $table->string('alamat')->nullable();
+            $table->string('no_hp')->nullable();
+            
+            // Kolom saldo dengan nilai awal otomatis 0
+            $table->integer('saldo')->default(0); 
+            
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('kepala_keluargas');
+        Schema::dropIfExists('nasabahs');
     }
 };
