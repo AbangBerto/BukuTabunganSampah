@@ -23,23 +23,19 @@ class PublicController extends Controller
     // ==========================================
     public function checkPin(Request $request)
     {
-        // Validasi inputan harus terisi dan berupa 6 angka
+        // Hanya memvalidasi bahwa warga sudah memilih nama dari dropdown
         $request->validate([
             'nasabah_id' => 'required',
-            'pin' => 'required|numeric|digits:6'
         ]);
 
-        $warga = Nasabah::findOrFail($request->nasabah_id);
+        // [DIPERBAIKI] Catat sesi menggunakan nama kunci yang benar agar tidak ditendang oleh getHistory
+        session(['izin_akses_' . $request->nasabah_id => true]);
+        
+        // Catat juga ID warga jika sewaktu-waktu dibutuhkan secara global
+        session(['warga_id' => $request->nasabah_id]);
 
-        // Jika PIN Cocok
-        if ($request->pin == $warga->pin) {
-            // Berikan tiket session (izin masuk)
-            session()->put('izin_akses_' . $warga->id, true);
-            return redirect()->route('public.history', $warga->id);
-        }
-
-        // Jika PIN Salah, tendang balik
-        return redirect()->back()->with('error_pin', 'PIN yang Anda masukkan salah!');
+        // [DIPERBAIKI] Langsung arahkan ke fungsi getHistory (Halaman Saldo & Riwayat yang asli)
+        return redirect()->route('public.history', ['id' => $request->nasabah_id]);
     }
 
     // ==========================================
@@ -47,9 +43,8 @@ class PublicController extends Controller
     // ==========================================
     public function getHistory($id)
     {
-        // Cek Keamanan: Apakah warga ini punya tiket session?
         if (!session()->has('izin_akses_' . $id)) {
-            // Jika memaksa masuk lewat URL, lempar kembali ke halaman depan
+            
             return redirect()->route('public.index')->with('error_pin', 'Akses ditolak! Silakan masukkan PIN Anda terlebih dahulu.');
         }
 
@@ -58,7 +53,8 @@ class PublicController extends Controller
 
         return view('public.history', compact('warga', 'transaksis'));
     }
-// ==========================================
+
+    // ==========================================
     // 4. Fitur Ganti PIN Rahasia Warga
     // ==========================================
     public function updatePin(Request $request, $id)
@@ -70,12 +66,11 @@ class PublicController extends Controller
 
         $warga = Nasabah::findOrFail($id);
 
-        // Cek apakah PIN Lama cocok
         if ($request->pin_lama != $warga->pin) {
             return redirect()->back()->with('error_ubah_pin', 'Gagal! PIN Lama yang Anda masukkan salah.');
         }
 
-        // VALIDASI BARU: Wajib 6 angka dan wajib cocok dengan inputan konfirmasi
+  
         $request->validate([
             'pin_baru' => 'required|numeric|digits:6|confirmed'
         ], [
@@ -84,7 +79,7 @@ class PublicController extends Controller
             'pin_baru.digits' => 'PIN harus terdiri dari 6 angka.'
         ]);
 
-        // Simpan PIN Baru ke database
+
         $warga->update([
             'pin' => $request->pin_baru
         ]);

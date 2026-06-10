@@ -1,13 +1,25 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="flex justify-between items-center print:hidden mb-4">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center print:hidden mb-6 gap-4">
     <a href="{{ route('admin.dashboard') }}" class="btn-abu px-4 py-2 rounded-xl text-sm font-bold shadow-sm inline-flex items-center">
         <i class="fa-solid fa-arrow-left mr-2"></i> Kembali
     </a>
-    <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-md inline-flex items-center transition">
-        <i class="fa-solid fa-print mr-2"></i> Cetak Laporan
-    </button>
+
+    <form action="{{ route('admin.laporan') }}" method="GET" class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+        <select name="bulan" onchange="this.form.submit()" class="bg-white border-2 border-gray-200 px-4 py-2 rounded-xl text-sm font-bold focus:outline-none focus:border-green-600 shadow-sm cursor-pointer">
+            <option value="semua" {{ $bulanDipilih == 'semua' ? 'selected' : '' }}>Semua Riwayat (Tanpa Filter)</option>
+            @foreach($daftarBulan as $angka => $nama)
+                <option value="{{ $angka }}" {{ $bulanDipilih == $angka ? 'selected' : '' }}>
+                    Bulan {{ $nama }}
+                </option>
+            @endforeach
+        </select>
+
+        <button type="button" onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md inline-flex items-center transition whitespace-nowrap">
+            <i class="fa-solid fa-print mr-2"></i> Cetak Laporan
+        </button>
+    </form>
 </div>
 
 <div id="print-area" class="bg-white p-4">
@@ -15,7 +27,12 @@
     <div class="text-center pb-4 border-b-2 border-black mb-6">
         <h1 class="text-2xl font-black uppercase tracking-wider print-title">Laporan Keuangan Bank Sampah</h1>
         <p class="text-gray-600 font-medium print-subtitle">Desa Ngembringan</p>
-        <p class="text-sm text-gray-500 mt-1 print-date">Dicetak pada: {{ \Carbon\Carbon::now()->format('d F Y, H:i') }} WIB</p>
+        
+        <p class="text-green-700 font-bold mt-1 text-lg print-subtitle print-text-black uppercase">
+            Periode: {{ $bulanDipilih == 'semua' ? 'Semua Waktu' : $daftarBulan[$bulanDipilih] . ' ' . $tahunSekarang }}
+        </p>
+        
+        <p class="text-sm text-gray-500 mt-2 print-date">Dicetak pada: {{ \Carbon\Carbon::now()->format('d F Y, H:i') }} WIB</p>
     </div>
 
     <div class="grid grid-cols-3 gap-4 mb-8">
@@ -63,7 +80,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="border border-gray-300 px-2 py-4 text-center italic text-gray-500">Belum ada data transaksi.</td>
+                    <td colspan="6" class="border border-gray-300 px-2 py-4 text-center italic text-gray-500">Belum ada data transaksi untuk periode ini.</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -103,7 +120,6 @@
             padding: 0;
         }
 
-        /* 5. Perkecil teks tabel dan kurangi padding agar muat banyak */
         .print-table { width: 100% !important; table-layout: fixed; }
         .print-table th, .print-table td { 
             font-size: 11px !important; 
@@ -111,13 +127,12 @@
             word-wrap: break-word;
         }
         
-        /* 6. Hilangkan warna-warni teks agar cetak hitam putih lebih tegas */
+        
         .print-text-black { color: black !important; }
 
         /* 7. Munculkan area tanda tangan */
         .print\:flex { display: flex !important; }
-        
-        /* 8. Perkecil bagian kartu total uang */
+     
         .summary-box h2 { font-size: 16px !important; }
         .print-title { font-size: 20px !important; }
     }

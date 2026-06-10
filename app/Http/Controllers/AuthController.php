@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Laravel\Socialite\Facades\Socialite; // <-- Baris ini wajib ada untuk Google
+use Laravel\Socialite\Facades\Socialite; 
 use App\Models\User; //
 class AuthController extends Controller
 {
@@ -43,7 +43,7 @@ class AuthController extends Controller
     public function redirectToGoogle()
     {
         return Socialite::driver('google')
-            ->with(['prompt' => 'select_account']) // <--- TAMBAHKAN KODE INI
+            ->with(['prompt' => 'select_account'])
             ->redirect();
     }
 
@@ -51,21 +51,19 @@ class AuthController extends Controller
     public function handleGoogleCallback()
     {
         try {
-            // Ambil data akun Google yang barusan login
             $googleUser = Socialite::driver('google')->user();
 
-            // Cek apakah email Google tersebut sudah terdaftar sebagai Admin di database kita
             $user = User::where('email', $googleUser->getEmail())->first();
 
             if ($user) {
-                // Jika ya, update google_id nya (jika belum ada) dan paksa masuk sistem
+
                 $user->update(['google_id' => $googleUser->getId()]);
                 Auth::login($user);
                 
                 request()->session()->regenerate();
                 return redirect()->route('admin.dashboard')->with('success', 'Berhasil login menggunakan Google!');
             } else {
-                // Jika emailnya bukan milik admin (misal email warga mencoba login)
+                
                 return redirect()->route('login')->with('error', 'Akses Ditolak: Email Anda tidak terdaftar sebagai Admin Desa.');
             }
         } catch (\Exception $e) {

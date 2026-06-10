@@ -28,7 +28,7 @@ class AdminController extends Controller
     // ==========================================
     public function postTransaksi(Request $request)
     {
-        // Validasi: pastikan nasabah_id yang dicari, BUKAN kepala_keluarga_id
+        // Validasi: pastikan nasabah_id yang dicari ada di tabel
         $request->validate([
             'nasabah_id' => 'required|exists:nasabahs,id',
             'jenis_sampah' => 'required|in:Plastik,Besi,Lainnya',
@@ -100,6 +100,7 @@ class AdminController extends Controller
         Artisan::call('cache:clear');
         return redirect()->route('admin.dashboard')->with('success', 'Cache sistem hosting berhasil dibersihkan!');
     }
+
     // ==========================================
     // 5. Batalkan / Hapus Transaksi (Otomatis Sesuaikan Saldo)
     // ==========================================
@@ -129,20 +130,51 @@ class AdminController extends Controller
 
         return redirect()->back()->with('success', 'Transaksi berhasil dibatalkan! Saldo warga telah disesuaikan kembali secara otomatis.');
     }
-    public function getLaporan()
-    {
-        // 1. Hitung total semua saldo warga saat ini
-        $totalSaldoWarga = Nasabah::sum('saldo');
-        
-        // 2. Hitung total uang yang pernah disetor (Masuk)
-        $totalUangMasuk = Transaksi::where('jenis_transaksi', 'setor')->sum('nominal');
-        
-        // 3. Hitung total uang yang pernah ditarik (Keluar)
-        $totalUangKeluar = Transaksi::where('jenis_transaksi', 'tarik')->sum('nominal');
-        
-        // 4. Ambil SEMUA data transaksi untuk tabel laporan (bukan cuma 10 terakhir)
-        $semuaTransaksi = Transaksi::with('nasabah')->latest()->get();
 
-        return view('admin.laporan', compact('totalSaldoWarga', 'totalUangMasuk', 'totalUangKeluar', 'semuaTransaksi'));
+    // ==========================================
+    // 6. Tampilkan Laporan (Dengan Filter Bulan)
+    // ==========================================
+    public function getLaporan(Request $request)
+    {
+        // Siapkan daftar nama bulan untuk dropdown filter
+        $daftarBulan = [
+            '01' => 'Januari', '02' => 'Februari', '03' => 'Maret',
+            '04' => 'April', '05' => 'Mei', '06' => 'Juni',
+            '07' => 'Juli', '08' => 'Agustus', '09' => 'September',
+            '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+        ];
+
+        // Ambil input bulan dari URL (default: bulan saat ini berjalan)
+        $bulanDipilih = $request->input('bulan', date('m'));
+        $tahunSekarang = date('Y');
+
+        // Query dasar untuk mengambil transaksi
+        $query = Transaksi::with('nasabah');
+
+        // Jika filter BUKAN "semua", maka saring berdasarkan bulan & tahun
+        if ($bulanDipilih != 'semua') {
+            $query->whereMonth('created_at', $bulanDipilih)
+                  ->whereYear('created_at', $tahunSekarang);
+        }
+
+        // Ambil data transaksi yang sudah disaring
+        $semuaTransaksi = $query->orderBy('created_at', 'desc')->get();
+
+        // Hitung total masuk & keluar HANYA untuk bulan yang dipilih
+        $totalUangMasuk = $semuaTransaksi->where('jenis_transaksi', 'setor')->sum('nominal');
+        $totalUangKeluar = $semuaTransaksi->where('jenis_transaksi', 'tarik')->sum('nominal');
+
+        // Total saldo warga TETAP mengambil dari seluruh tabel nasabah
+        $totalSaldoWarga = Nasabah::sum('saldo');
+
+        return view('admin.laporan', compact(
+            'semuaTransaksi', 
+            'totalUangMasuk', 
+            'totalUangKeluar', 
+            'totalSaldoWarga',
+            'daftarBulan',
+            'bulanDipilih',
+            'tahunSekarang'
+        ));
     }
 }

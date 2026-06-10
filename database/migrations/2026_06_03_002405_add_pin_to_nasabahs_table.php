@@ -8,10 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('nasabahs', function (Blueprint $table) {
-            // Menambahkan kolom PIN, default 123456
-            $table->string('pin', 6)->default('123456')->after('no_hp');
-        });
+        Schema::table('nasabahs', function (Blueprint $table) {});
     }
 
     public function down(): void

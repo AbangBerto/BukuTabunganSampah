@@ -7,12 +7,16 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 
 // ==========================================
-// 1. Jalur Publik (Warga Cek Saldo Pakai PIN)
+// 1. Jalur Publik (Warga Cek Saldo Langsung)
 // ==========================================
 Route::get('/', [PublicController::class, 'index'])->name('public.index');
-Route::post('/cek-pin', [PublicController::class, 'checkPin'])->name('public.checkPin');
+
+// URL diubah menjadi /cek-saldo agar sesuai logika baru, nama route tetap agar view aman
+Route::post('/cek-saldo', [PublicController::class, 'checkPin'])->name('public.checkPin');
+
+// Rute ini yang bertugas menampilkan halaman Saldo & Riwayat (Buku Tabungan)
 Route::get('/warga/{id}/riwayat', [PublicController::class, 'getHistory'])->name('public.history');
-Route::post('/warga/{id}/ganti-pin', [PublicController::class, 'updatePin'])->name('public.updatePin');
+
 
 // ==========================================
 // 2. Jalur Autentikasi (Admin Login)
@@ -25,18 +29,19 @@ Route::post('/logout', [AuthController::class, 'postLogout'])->name('logout');
 Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('google.callback');
 
+
 // ==========================================
 // 3. Jalur Data Warga (Wajib Login Admin)
 // ==========================================
 // Semua rute di dalam grup ini dikunci, hanya admin yang bisa mengakses
 Route::middleware('auth')->group(function () {
     Route::get('/nasabah', [NasabahController::class, 'index'])->name('nasabah.index');
-    Route::post('/nasabah', [NasabahController::class, 'store'])->name('nasabah.store'); // Dipindahkan ke sini agar aman
+    Route::post('/nasabah', [NasabahController::class, 'store'])->name('nasabah.store');
     Route::get('/nasabah/{id}/edit', [NasabahController::class, 'edit'])->name('nasabah.edit');
     Route::put('/nasabah/{id}', [NasabahController::class, 'update'])->name('nasabah.update');
     Route::delete('/nasabah/{id}', [NasabahController::class, 'destroy'])->name('nasabah.destroy');
-    Route::post('/nasabah/{id}/reset-pin', [NasabahController::class, 'resetPin'])->name('nasabah.resetPin');
 });
+
 
 // ==========================================
 // 4. Jalur Panel Admin (Wajib Login)

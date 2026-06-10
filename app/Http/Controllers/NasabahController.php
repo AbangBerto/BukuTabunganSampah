@@ -67,20 +67,4 @@ class NasabahController extends Controller
 
         return redirect()->route('nasabah.index')->with('success', 'Data warga berhasil dihapus dari sistem!');
     }
-    // ==========================================
-    // Fitur Khusus Admin: Reset PIN Warga ke 123456
-    // ==========================================
-    public function resetPin($id)
-    {
-        // Cari data warga berdasarkan ID yang diklik
-        $warga = \App\Models\Nasabah::findOrFail($id);
-        
-        // Ubah PIN warga tersebut kembali ke bawaan pabrik
-        $warga->update([
-            'pin' => '123456'
-        ]);
-
-        // Kembalikan admin ke halaman sebelumnya dengan pesan sukses
-        return redirect()->back()->with('success', 'PIN rahasia milik ' . $warga->nama . ' berhasil direset kembali ke 123456!');
-    }
 }

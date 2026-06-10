@@ -17,8 +17,6 @@ class Transaksi extends Model
         'keterangan'
     ];
 
-    // INI JEMBATAN RELASI YANG DICARI OLEH ERROR MERAH TERSEBUT
-    // Menjelaskan ke sistem bahwa satu transaksi ini adalah milik dari seorang Nasabah (Warga)
     public function nasabah()
     {
         return $this->belongsTo(Nasabah::class);
