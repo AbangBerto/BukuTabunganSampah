@@ -1,48 +1,10 @@
 @extends('layouts.app')
 
-@section('content')
-
+@push('styles')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<style>
-    /* Desain Kotak Select2 yang rapi */
-    .select2-container .select2-selection--single {
-        height: 56px !important; 
-        border-radius: 1rem !important; 
-        border: 2px solid #e5e7eb !important; 
-        background-color: #f9fafb !important; 
-        display: flex;
-        align-items: center;
-        padding-left: 0.5rem;
-        font-size: 0.875rem;
-        font-weight: 700;
-        color: #374151 !important;
-    }
-    .select2-container--default .select2-selection--single .select2-selection__rendered {
-        color: #374151 !important;
-    }
-    .select2-container--default .select2-selection--single .select2-selection__arrow {
-        height: 56px !important;
-        right: 15px !important;
-    }
-    .select2-container--open .select2-selection--single {
-        border-color: #22c55e !important; 
-    }
-    .select2-dropdown {
-        border-radius: 1rem !important;
-        border: 2px solid #22c55e !important;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-    }
-    .select2-search__field {
-        border-radius: 0.5rem !important;
-        padding: 10px !important;
-        outline: none !important;
-    }
-    .select2-search__field:focus {
-        border: 2px solid #22c55e !important;
-    }
-</style>
+@endpush
 
+@section('content')
 <div class="max-w-md mx-auto space-y-6 mt-10 relative z-10">
     
     <div class="bg-white rounded-3xl p-6 shadow-lg border border-gray-100">
@@ -50,14 +12,8 @@
             <h2 class="text-xl font-black text-green-700">Cek Tabungan Warga</h2>
             <p class="text-xs text-gray-400 mt-1">Cari dan pilih nama Anda untuk melihat saldo</p>
         </div>
-        
-        @if(session('error_pin'))
-            <div class="p-3 mb-5 text-sm font-bold text-red-800 rounded-xl bg-red-50 border border-red-200 text-center shadow-sm">
-                <i class="fa-solid fa-triangle-exclamation mr-1"></i> {{ session('error_pin') }}
-            </div>
-        @endif
 
-        <form action="{{ route('public.checkPin') }}" method="POST" class="space-y-5">
+        <form action="{{ route('public.checkSaldo') }}" method="POST" class="space-y-5">
             @csrf
             
             <div>
@@ -85,7 +41,9 @@
     </div>
 
 </div>
+@endsection
 
+@push('scripts')
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
@@ -102,4 +60,4 @@
         });
     });
 </script>
-@endsection
+@endpush

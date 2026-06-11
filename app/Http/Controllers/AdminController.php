@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Nasabah;     // Menggunakan model Nasabah (Warga)
-use App\Models\Transaksi;   // Menggunakan model Transaksi
+use App\Models\Nasabah; 
+use App\Models\Transaksi;  
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 

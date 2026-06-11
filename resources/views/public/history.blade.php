@@ -2,22 +2,6 @@
 
 @section('content')
 
-<style>
-    .riwayat-scroll::-webkit-scrollbar {
-        width: 5px;
-    }
-    .riwayat-scroll::-webkit-scrollbar-track {
-        background: #f8fafc; 
-        border-radius: 10px;
-    }
-    .riwayat-scroll::-webkit-scrollbar-thumb {
-        background: #cbd5e1; 
-        border-radius: 10px;
-    }
-    .riwayat-scroll::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8; 
-    }
-</style>
 
 <div class="space-y-6">
     

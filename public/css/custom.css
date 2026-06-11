@@ -1,0 +1,94 @@
+/* ==========================================
+   TOMBOL KUSTOM (Dari layouts.app)
+========================================== */
+.btn-hijau {
+    background-color: #059669 !important;
+    color: #ffffff !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+.btn-hijau:hover { background-color: #047857 !important; }
+
+.btn-merah {
+    background-color: #dc2626 !important;
+    color: #ffffff !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+.btn-merah:hover { background-color: #b91c1c !important; }
+
+.btn-gelap {
+    background-color: #1f2937 !important;
+    color: #ffffff !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+.btn-gelap:hover { background-color: #111827 !important; }
+
+.btn-abu {
+    background-color: #f3f4f6 !important;
+    color: #374151 !important;
+    border: 1px solid #d1d5db;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+button:active, a:active { transform: scale(0.98); }
+
+/* ==========================================
+   DESAIN SELECT2 PENCARIAN (Dari public.index)
+========================================== */
+.select2-container .select2-selection--single {
+    height: 56px !important; 
+    border-radius: 1rem !important; 
+    border: 2px solid #e5e7eb !important; 
+    background-color: #f9fafb !important; 
+    display: flex;
+    align-items: center;
+    padding-left: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #374151 !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #374151 !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 56px !important;
+    right: 15px !important;
+}
+.select2-container--open .select2-selection--single {
+    border-color: #22c55e !important; 
+}
+.select2-dropdown {
+    border-radius: 1rem !important;
+    border: 2px solid #22c55e !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+.select2-search__field {
+    border-radius: 0.5rem !important;
+    padding: 10px !important;
+    outline: none !important;
+}
+.select2-search__field:focus {
+    border: 2px solid #22c55e !important;
+}
+
+/* ==========================================
+   SCROLLBAR RIWAYAT (Dari public.history)
+========================================== */
+.riwayat-scroll::-webkit-scrollbar { width: 5px; }
+.riwayat-scroll::-webkit-scrollbar-track { background: #f8fafc; border-radius: 10px; }
+.riwayat-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.riwayat-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }

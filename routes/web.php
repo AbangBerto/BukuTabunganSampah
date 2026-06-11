@@ -11,8 +11,7 @@ use App\Http\Controllers\AuthController;
 // ==========================================
 Route::get('/', [PublicController::class, 'index'])->name('public.index');
 
-// URL diubah menjadi /cek-saldo agar sesuai logika baru, nama route tetap agar view aman
-Route::post('/cek-saldo', [PublicController::class, 'checkPin'])->name('public.checkPin');
+Route::post('/cek-saldo', [PublicController::class, 'checkSaldo'])->name('public.checkSaldo');
 
 // Rute ini yang bertugas menampilkan halaman Saldo & Riwayat (Buku Tabungan)
 Route::get('/warga/{id}/riwayat', [PublicController::class, 'getHistory'])->name('public.history');
