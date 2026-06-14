@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite; 
-use App\Models\User; //
+use App\Models\User;
+
 class AuthController extends Controller
 {
     public function getLogin()
@@ -22,6 +23,15 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+
+            // ==========================================
+            // LOGIKA BARU: Cek Role Setelah Login Manual
+            // ==========================================
+            if (Auth::user()->role === 'superadmin') {
+                return redirect()->route('superadmin.dashboard')->with('success', 'Selamat datang kembali, Super Admin!');
+            }
+
+            // Jika bukan superadmin, arahkan ke dashboard transaksi biasa
             return redirect()->route('admin.dashboard')->with('success', 'Selamat datang kembali, Admin!');
         }
 
@@ -38,8 +48,8 @@ class AuthController extends Controller
 
         return redirect('/')->with('success', 'Berhasil keluar dari sistem admin.');
     }
+    
     // 1. Mengarahkan admin ke halaman Login Google
-   // 1. Mengarahkan admin ke halaman Login Google
     public function redirectToGoogle()
     {
         return Socialite::driver('google')
@@ -56,14 +66,20 @@ class AuthController extends Controller
             $user = User::where('email', $googleUser->getEmail())->first();
 
             if ($user) {
-
                 $user->update(['google_id' => $googleUser->getId()]);
                 Auth::login($user);
                 
                 request()->session()->regenerate();
+
+                // ==========================================
+                // LOGIKA BARU: Cek Role Setelah Login via Google
+                // ==========================================
+                if (Auth::user()->role === 'superadmin') {
+                    return redirect()->route('superadmin.dashboard')->with('success', 'Berhasil masuk menggunakan Google sebagai Super Admin!');
+                }
+
                 return redirect()->route('admin.dashboard')->with('success', 'Berhasil login menggunakan Google!');
             } else {
-                
                 return redirect()->route('login')->with('error', 'Akses Ditolak: Email Anda tidak terdaftar sebagai Admin Desa.');
             }
         } catch (\Exception $e) {

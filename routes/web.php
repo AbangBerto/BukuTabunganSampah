@@ -5,6 +5,7 @@ use App\Http\Controllers\NasabahController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SuperAdminController;
 
 // ==========================================
 // 1. Jalur Publik (Warga Cek Saldo Langsung)
@@ -53,4 +54,13 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::post('/tarik-uang', [AdminController::class, 'postTarikUang'])->name('admin.storeTarikUang');
     Route::delete('/transaksi/{id}', [AdminController::class, 'destroyTransaksi'])->name('admin.destroyTransaksi');
     Route::get('/laporan', [AdminController::class, 'getLaporan'])->name('admin.laporan');
+    
+
+    Route::prefix('superadmin')->group(function () {
+        // Karena sudah pakai prefix, '/' di sini otomatis menjadi '/superadmin'
+        Route::get('/', [SuperAdminController::class, 'index'])->name('superadmin.dashboard');
+        Route::post('/tambah-admin', [SuperAdminController::class, 'storeAdmin'])->name('superadmin.storeAdmin');
+        Route::delete('/hapus-admin/{id}', [SuperAdminController::class, 'destroyAdmin'])->name('superadmin.destroyAdmin');
+    });
+
 });

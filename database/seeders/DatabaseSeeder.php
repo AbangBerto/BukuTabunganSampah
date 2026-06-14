@@ -11,14 +11,29 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Membuat Akun Admin Desa
+        // ==========================================
+        // 1. Membuat Akun Super Admin Utama
+        // ==========================================
         User::create([
-            'name' => 'Admin Bank Sampah',
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('password123'), // Password default: password123
+            'name' => 'Super Admin Desa',
+            'email' => env('SUPERADMIN_EMAIL', 'superadmin@gmail.com'), 
+            'password' => Hash::make(env('SUPERADMIN_PASSWORD', 'password123')), 
+            'role' => 'superadmin',
         ]);
 
-        // 2. Membuat Data Contoh Warga (Nasabah)
+        // ==========================================
+        // 2. Membuat Akun Admin Biasa (Petugas)
+        // ==========================================
+        User::create([
+            'name' => 'Admin Bank Sampah',
+            'email' => env('ADMIN_EMAIL', 'admin@gmail.com'),
+            'password' => Hash::make(env('ADMIN_PASSWORD', 'password123')), 
+            'role' => 'admin',
+        ]);
+
+        // ==========================================
+        // 3. Membuat Data Contoh Warga (Nasabah)
+        // ==========================================
         Nasabah::create([
             'nama' => 'Budi Santoso',
             'alamat' => 'RT 01 / RW 01, Dusun Ngembringan',
